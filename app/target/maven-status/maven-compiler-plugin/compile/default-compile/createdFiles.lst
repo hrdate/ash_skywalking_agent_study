@@ -1,0 +1,5 @@
+org/example/app/controller/UserController.class
+org/example/app/SpringBootStarter.class
+org/example/app/service/UserService.class
+org/example/app/entity/UserEntity.class
+org/example/app/mapper/UserMapper.class
