@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.example</groupId>
+    <artifactId>ash_skywalking_agent_study</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>apm-plugins</artifactId>
+  <packaging>jar</packaging>
+
+  <name>apm-agent</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>apm-agent-core</artifactId>
+      <version>${project.version}</version>
+      <!--指定provided, 因为 apm-plugins 只有编译时依赖 apm-agent-core模块, 运行时会被apm-agent加载, 而core模块已经被agent加载了-->
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>
