@@ -9,7 +9,12 @@
   </parent>
 
   <artifactId>apm-plugins</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>mysql-plugin</module>
+    <module>springmvc-plugin</module>
+  </modules>
 
   <name>apm-agent</name>
   <url>http://maven.apache.org</url>
