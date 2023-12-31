@@ -3,9 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.example</groupId>
-    <artifactId>ash_skywalking_agent_study</artifactId>
+    <artifactId>apm-sniffer</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>apm-agent</artifactId>
@@ -23,6 +22,12 @@
       <groupId>org.example</groupId>
       <artifactId>apm-agent-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -62,6 +67,46 @@
               <!-- 只运行一次 -->
               <goal>single</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 创建dist目录, 将生成的agent包拷贝过去，并预留dist/plugins目录用于放插件jar包-->
+      <plugin>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <!-- mvn clean时 删除dist目录 -->
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete dir="${project.basedir}/../../dist"/>
+              </target>
+            </configuration>
+          </execution>
+          <!-- mvn package 时生成dist目录, 拷贝agent包过去, 预留dist/plugins目录 -->
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <mkdir dir="${project.basedir}/../../dist"/>
+                <copy file="${project.build.directory}/apm-agent-1.0-SNAPSHOT-jar-with-dependencies.jar"
+                      tofile="${project.basedir}/../../dist/apm-agent-1.0-SNAPSHOT-jar-with-dependencies.jar"
+                      overwrite="true"/>
+                <mkdir dir="${project.basedir}/../../dist/plugins"/>
+              </target>
+            </configuration>
           </execution>
         </executions>
       </plugin>
