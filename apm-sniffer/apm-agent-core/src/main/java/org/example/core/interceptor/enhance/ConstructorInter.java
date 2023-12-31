@@ -1,10 +1,10 @@
 package org.example.core.interceptor.enhance;
 
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bind.annotation.*;
-
-import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
+import org.example.core.loader.InterceptorInstanceLoader;
 
 /**
  * 通用的构造方法拦截器
@@ -20,6 +20,11 @@ public class ConstructorInter {
     private ConstructorInterceptor interceptor;
 
     public ConstructorInter(String methodsInterceptorName, ClassLoader classLoader) {
+        try {
+            interceptor = InterceptorInstanceLoader.load(methodsInterceptorName, classLoader);
+        } catch (Exception e) {
+            log.error("can not load, interceptorClassName: {}, e: ", methodsInterceptorName, e);
+        }
     }
 
 
@@ -36,7 +41,7 @@ public class ConstructorInter {
         try {
             // 构造方法拦截的目标类一定新增了成员变量, 然后实现了该字段的getter,setter接口
             EnhancedInstance enhancedInstance = (EnhancedInstance) obj;
-            interceptor.onConstruct(enhancedInstance,allArgs);
+            interceptor.onConstruct(enhancedInstance, allArgs);
         } catch (Throwable t) {
             log.error("Constructor Interceptor: {}, enhance constructor method failed,  e: ",
                     interceptor.getClass().getName(), t);

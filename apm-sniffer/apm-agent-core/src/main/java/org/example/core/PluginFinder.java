@@ -88,14 +88,14 @@ public class PluginFinder {
      */
     public List<AbstractClassEnhancePluginDefine> find(TypeDescription typeDescription) {
         List<AbstractClassEnhancePluginDefine> matechedPluginList = new LinkedList<>();
-        String className = typeDescription.getActualName();
+        String className = typeDescription.getTypeName();
         // 1. 判断 全限制类名匹配的插件
         if(nameMatchDefine.containsKey(className)){
             matechedPluginList.addAll(nameMatchDefine.get(className));
         }
         // 2. 判断 间接匹配的插件 (需要插件提供 判断是否匹配的方法)
         for(AbstractClassEnhancePluginDefine indirectMatchPlugin : signatureMatchDefine) {
-            IndirectMatch indirectMatch = (IndirectMatch) indirectMatchPlugin;
+            IndirectMatch indirectMatch = (IndirectMatch) indirectMatchPlugin.enhanceClass();
             if(indirectMatch.isMatch(typeDescription)) {
                 matechedPluginList.add(indirectMatchPlugin);
             }

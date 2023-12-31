@@ -2,6 +2,7 @@ package org.example.core.interceptor.enhance;
 
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.implementation.bind.annotation.*;
+import org.example.core.loader.InterceptorInstanceLoader;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -19,6 +20,11 @@ public class InstanceMethodsInter {
     private InstanceMethodAroundInterceptor interceptor;
 
     public InstanceMethodsInter(String methodsInterceptorName, ClassLoader classLoader) {
+        try {
+            interceptor = InterceptorInstanceLoader.load(methodsInterceptorName, classLoader);
+        } catch (Exception e) {
+            log.error("can not load, interceptorClassName: {}, e: ", methodsInterceptorName, e);
+        }
     }
 
 

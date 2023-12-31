@@ -44,9 +44,10 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
         }
 
         // 如果是头一次增强当前类, 则新增用于传递中间值的成员变量 (如果还没实现EnhanceContext接口，且没有新增过字段，则新增)
-        if(!typeDescription.isAssignableFrom(EnhanceContext.class)
+        if(!typeDescription.isAssignableFrom(EnhancedInstance.class)
             && !context.isObjectExtended()) {
-            newBuilder
+            // 因为 Byte Buddy大多数类都是不可变的，所以需要变量接收
+            newBuilder = newBuilder
                     // 新增成员变量，用于拦截器逻辑传递中间值
                     .defineField(CONTEXT_ATTR_NAME,Object.class, Opcodes.ACC_PRIVATE | Opcodes.ACC_VOLATILE)
                     // 实现 getter, setter接口

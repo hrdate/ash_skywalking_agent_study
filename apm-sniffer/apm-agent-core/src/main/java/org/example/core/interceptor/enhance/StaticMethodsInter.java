@@ -5,6 +5,7 @@ import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import org.example.core.loader.InterceptorInstanceLoader;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -23,6 +24,11 @@ public class StaticMethodsInter {
     private StaticMethodAroundInterceptor interceptor;
 
     public StaticMethodsInter(String methodsInterceptorName, ClassLoader classLoader) {
+        try {
+            interceptor = InterceptorInstanceLoader.load(methodsInterceptorName, classLoader);
+        } catch (Exception e) {
+            log.error("can not load, interceptorClassName: {}, e: ", methodsInterceptorName, e);
+        }
     }
 
 

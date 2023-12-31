@@ -9,11 +9,14 @@ import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.utility.JavaModule;
 import org.example.core.AbstractClassEnhancePluginDefine;
 import org.example.core.EnhanceContext;
+import org.example.core.PluginBoostrap;
 import org.example.core.PluginFinder;
 
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import java.util.List;
+
+import static net.bytebuddy.matcher.ElementMatchers.nameEndsWith;
 
 /**
  * 模仿SkyWalking 的 统一 Java Agent 入口类
@@ -24,12 +27,13 @@ import java.util.List;
 @Slf4j
 public class SkyWalkingAgent {
     public static void premain(String args, Instrumentation instrumentation) {
-
+        log.info("进入premain");
         PluginFinder pluginFinder = null;
         try {
-            pluginFinder = new PluginFinder(null);
+            pluginFinder = new PluginFinder(new PluginBoostrap().loadPlugins());
         } catch (Exception e) {
             log.error("Agent初始化失败, e: ", e);
+            return;
         }
 
         ByteBuddy byteBuddy = new ByteBuddy().with(TypeValidation.of(true));
@@ -44,6 +48,7 @@ public class SkyWalkingAgent {
                         // 其他插件 类拦截配置
                         */
         agentBuilder
+                .ignore(nameEndsWith("BasicErrorController"))
                 // 1. 因为 pluginFinder负责加载插件，所以维护了所有插件需要拦截的类范围
                 .type(pluginFinder.buildMatch())
                 // 2. 从 所有插件中提取需要拦截的方法和拦截器
@@ -73,7 +78,7 @@ public class SkyWalkingAgent {
             List<AbstractClassEnhancePluginDefine> pluginDefineList = pluginFinder.find(typeDescription);
             if (pluginDefineList.isEmpty()) {
                 // 当前拦截的类 实际没有对应的 插件，则直接返回builder (下次进入当前方法就是下一个待判断的类了)
-                log.debug("pluginFinder拦截了指定类,但是没有对应的插件(正常不该出现该情况), typeDescription: {}", typeDescription.getActualName());
+                log.info("pluginFinder拦截了指定类,但是没有对应的插件(正常不该出现该情况), typeDescription: {}", typeDescription.getActualName());
                 return builder;
             }
             DynamicType.Builder<?> newBuilder = builder;
@@ -85,7 +90,7 @@ public class SkyWalkingAgent {
                 newBuilder =  possibleBuilder == null ? newBuilder : possibleBuilder;
             }
             if(enhanceContext.isEnhanced()) {
-                log.debug("class: {} has been enhanced", typeDescription.getActualName());
+                log.info("class: {} has been enhanced", typeDescription.getActualName());
             }
             // 链式调用后，已经绑定了拦截typeDescription的插件集合的各自方法拦截范围+拦截器
             return newBuilder;
