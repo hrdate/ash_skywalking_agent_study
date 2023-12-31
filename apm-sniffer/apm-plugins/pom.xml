@@ -3,9 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.example</groupId>
-    <artifactId>ash_skywalking_agent_study</artifactId>
+    <artifactId>apm-sniffer</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>apm-plugins</artifactId>
@@ -15,9 +14,6 @@
     <module>mysql-plugin</module>
     <module>springmvc-plugin</module>
   </modules>
-
-  <name>apm-agent</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

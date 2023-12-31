@@ -13,8 +13,6 @@
     <module>app</module>
     <module>standalone-plugins</module>
     <module>apm-sniffer</module>
-    <module>apm-sniffer/apm-agent</module>
-    <module>apm-sniffer/apm-plugins/mysql-plugin</module>
   </modules>
 
   <properties>

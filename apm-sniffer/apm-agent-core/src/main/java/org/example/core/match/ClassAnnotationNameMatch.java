@@ -1,8 +1,11 @@
 package org.example.core.match;
 
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.annotation.AnnotationList;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,8 +34,8 @@ public class ClassAnnotationNameMatch implements IndirectMatch{
      * 多个注解之间，要求是and的关系
      */
     @Override
-    public ElementMatcher.Junction<? extends TypeDescription> buildJunction() {
-        ElementMatcher.Junction<? extends TypeDescription> junction = null;
+    public ElementMatcher.Junction<? super TypeDescription> buildJunction() {
+        ElementMatcher.Junction<? super TypeDescription> junction = null;
         for (String annotationName : needMatchAnnotations) {
             if(null == junction) {
                 junction = isAnnotatedWith(named(annotationName));
@@ -41,6 +44,19 @@ public class ClassAnnotationNameMatch implements IndirectMatch{
             }
         }
         return junction;
+    }
+
+    @Override
+    public boolean isMatch(TypeDescription typeDescription) {
+        // 注解匹配要求 所有注解都匹配上，才算满足条件
+        ArrayList<String> needMatchList = new ArrayList<>(needMatchAnnotations);
+        AnnotationList declaredAnnotations = typeDescription.getDeclaredAnnotations();
+        for (AnnotationDescription declaredAnnotation : declaredAnnotations) {
+            String annotationName = declaredAnnotation.getAnnotationType().getActualName();
+            needMatchList.remove(annotationName);
+        }
+        // 为空说明所有要求匹配的注解都已匹配完
+        return needMatchList.isEmpty();
     }
 
     public static IndirectMatch byClassAnnotationMatch(String... annotationNames) {

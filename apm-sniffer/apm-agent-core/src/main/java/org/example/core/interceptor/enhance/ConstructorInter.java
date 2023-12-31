@@ -1,10 +1,7 @@
 package org.example.core.interceptor.enhance;
 
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.implementation.bind.annotation.*;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -16,13 +13,13 @@ import java.util.concurrent.Callable;
  * @date : 2023/12/31 6:27 PM
  */
 @Slf4j
-public class ConstructorMethodsInter {
+public class ConstructorInter {
     /**
      * 拦截器在各个位置执行某些逻辑，封装在此成员变量中
      */
-    private StaticMethodAroundInterceptor interceptor;
+    private ConstructorInterceptor interceptor;
 
-    public ConstructorMethodsInter(String methodsInterceptorName, ClassLoader classLoader) {
+    public ConstructorInter(String methodsInterceptorName, ClassLoader classLoader) {
     }
 
 
@@ -30,41 +27,19 @@ public class ConstructorMethodsInter {
      * 具体的拦截器逻辑， 整体预留的填充逻辑和AOP切面编程类似
      */
     @RuntimeType
-    public Object intercept(
-            // 被拦截的目标类
-            @Origin Class<?> clazz,
-            // 被拦截的目标方法
-            @Origin Method method,
+    public void intercept(
+            // 构造器方法执行完后的实例对象
+            @This Object obj,
             // 方被拦截的方法的法参数
-            @AllArguments Object[] allArgs,
-            // 调用原被拦截的目标方法
-            @SuperCall Callable<?> zuper) throws Throwable {
-        // 1. 前置增强
+            @AllArguments Object[] allArgs) throws Throwable {
+        // 构造方法执行完毕后， 执行增强逻辑
         try {
-            interceptor.beforeMethod(clazz, method, allArgs, method.getParameterTypes());
-        } catch (Throwable e) {
-            log.error("Interceptor: {}, enhance class: {}, before method failed, e: ", this.getClass().getName(), clazz, e);
+            // 构造方法拦截的目标类一定新增了成员变量, 然后实现了该字段的getter,setter接口
+            EnhancedInstance enhancedInstance = (EnhancedInstance) obj;
+            interceptor.onConstruct(enhancedInstance,allArgs);
+        } catch (Throwable t) {
+            log.error("Constructor Interceptor: {}, enhance constructor method failed,  e: ",
+                    interceptor.getClass().getName(), t);
         }
-        Object returnValue = null;
-        try {
-            returnValue = zuper.call();
-        } catch (Throwable e) {
-            // 2. 异常处理
-            try {
-                interceptor.handleEx(clazz, method, allArgs, method.getParameterTypes(), e);
-            } catch (Throwable innerError) {
-                log.error("Interceptor: {}, enhance class: {}, handle Exception failed, e: ", this.getClass().getName(), clazz, e);
-            }
-            // 继续上抛异常, 不影响原方法执行逻辑
-            throw e;
-        } finally {
-            // 3. 后置增强
-            try {
-                returnValue = interceptor.afterMethod(clazz, method, allArgs, method.getParameterTypes(), returnValue);
-            } catch (Throwable e) {
-                log.error("Interceptor: {}, enhance class: {}, after method failed, e: ", this.getClass().getName(), clazz, e);
-            }
-        }
-        return returnValue;
     }
 }

@@ -33,8 +33,8 @@ public class MultiClassNameMatch implements IndirectMatch {
      * 多个类之间，要求是or的关系 (即获取并集)
      */
     @Override
-    public ElementMatcher.Junction<? extends TypeDescription> buildJunction() {
-        ElementMatcher.Junction<? extends TypeDescription> junction = null;
+    public ElementMatcher.Junction<? super TypeDescription> buildJunction() {
+        ElementMatcher.Junction<? super TypeDescription> junction = null;
         for (String needMatchClassName : needMatchClassNames) {
             if(null == junction) {
                 junction = named(needMatchClassName);
@@ -43,6 +43,12 @@ public class MultiClassNameMatch implements IndirectMatch {
             }
         }
         return junction;
+    }
+
+    @Override
+    public boolean isMatch(TypeDescription typeDescription) {
+        // 多个类名匹配，只要含有指定的类名，就是匹配成功
+        return needMatchClassNames.contains(typeDescription.getCanonicalName());
     }
 
     public static IndirectMatch byMultiClassMatch(String... classNames) {

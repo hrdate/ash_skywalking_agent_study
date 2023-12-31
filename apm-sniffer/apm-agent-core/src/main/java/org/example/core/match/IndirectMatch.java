@@ -17,5 +17,11 @@ public interface IndirectMatch extends ClassMatch {
      *
      * @return
      */
-    ElementMatcher.Junction<? extends TypeDescription> buildJunction();
+    ElementMatcher.Junction<? super TypeDescription> buildJunction();
+
+    /**
+     * 用于判断 指定的类型 是否被 匹配器匹配
+     * @param typeDescription 等待判断的类型
+     */
+    boolean isMatch(TypeDescription typeDescription);
 }

@@ -6,6 +6,7 @@ import org.example.core.AbstractClassEnhancePluginDefine;
 import org.example.core.interceptor.ConstructorMethodsInterceptorPoint;
 import org.example.core.interceptor.InstanceMethodsInterceptorPoint;
 import org.example.core.interceptor.StaticMethodsInterceptorPoint;
+import org.example.core.interceptor.enhance.ClassEnhancePluginDefine;
 
 import static net.bytebuddy.matcher.ElementMatchers.*;
 import static net.bytebuddy.matcher.ElementMatchers.nameEndsWith;
@@ -16,7 +17,7 @@ import static net.bytebuddy.matcher.ElementMatchers.nameEndsWith;
  * @author : Ashiamd email: ashiamd@foxmail.com
  * @date : 2023/12/30 9:34 PM
  */
-public abstract class SpringmvcCommonInstrumentation extends AbstractClassEnhancePluginDefine {
+public abstract class SpringmvcCommonInstrumentation extends ClassEnhancePluginDefine {
     @Override
     protected InstanceMethodsInterceptorPoint[] getInstanceMethodsInterceptorPoints() {
         // 之前单独实现的MySQL agent，我们只拦截实例方法，这里也只拦截实例方法

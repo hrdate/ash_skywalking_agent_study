@@ -6,6 +6,7 @@ import org.example.core.AbstractClassEnhancePluginDefine;
 import org.example.core.interceptor.ConstructorMethodsInterceptorPoint;
 import org.example.core.interceptor.InstanceMethodsInterceptorPoint;
 import org.example.core.interceptor.StaticMethodsInterceptorPoint;
+import org.example.core.interceptor.enhance.ClassEnhancePluginDefine;
 import org.example.core.match.ClassMatch;
 import org.example.core.match.MultiClassNameMatch;
 
@@ -17,7 +18,7 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
  * @author : Ashiamd email: ashiamd@foxmail.com
  * @date : 2023/12/30 9:34 PM
  */
-public class MysqlInstrumentation extends AbstractClassEnhancePluginDefine {
+public class MysqlInstrumentation extends ClassEnhancePluginDefine {
     @Override
     protected ClassMatch enhanceClass() {
         return MultiClassNameMatch.byMultiClassMatch(

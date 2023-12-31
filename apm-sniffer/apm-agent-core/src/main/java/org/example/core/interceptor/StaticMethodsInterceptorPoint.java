@@ -18,7 +18,7 @@ public interface StaticMethodsInterceptorPoint {
     ElementMatcher<MethodDescription> getMethodsMatcher();
 
     /**
-     * 获取被增强方法对应的拦截器
+     * 获取被增强方法对应的拦截器, 必须是 {@link org.example.core.interceptor.enhance.StaticMethodAroundInterceptor} 的实现类
      */
     String getMethodsInterceptor();
 }
